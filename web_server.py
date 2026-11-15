@@ -168,11 +168,11 @@ class UnifiedRequestHandler(http.server.BaseHTTPRequestHandler):
         sys.stderr.write(f"[WebUI] {self.address_string()} - {format % args}\n")
 
 
-def start_server(port=8000):
-    server_address = ("127.0.0.1", port)
+def start_server(port=8000, host="0.0.0.0"):
+    server_address = (host, port)
     httpd = http.server.HTTPServer(server_address, UnifiedRequestHandler)
     print("=" * 70)
-    print(f" Web UI Live at: http://localhost:{port}")
+    print(f" Web UI Live at: http://{host}:{port}")
     print(" Serving Problem 1 (AI Agent Social Network) & Problem 2 (Hardware Q&A)")
     print(" Press Ctrl+C to stop.")
     print("=" * 70)
@@ -183,5 +183,11 @@ def start_server(port=8000):
 
 
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
-    start_server(port)
+    env_port = os.environ.get("PORT")
+    if env_port:
+        port = int(env_port)
+    elif len(sys.argv) > 1:
+        port = int(sys.argv[1])
+    else:
+        port = 8000
+    start_server(port=port, host="0.0.0.0")
